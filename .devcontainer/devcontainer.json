@@ -1,6 +1,6 @@
 // see https://github.com/microsoft/vscode-dev-containers/tree/v0.195.0/containers/python-3
 {
-	"name": "Jupyter Python",
+	"name": "Core-Curriculum",
 	"build": {
 		"dockerfile": "Dockerfile",
 		"context": ".."
