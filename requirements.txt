@@ -1,6 +1,8 @@
 pylint
 requests
-mecab
 numpy
 pandas
 matplotlib
+spacy
+ginza
+ja-ginza
