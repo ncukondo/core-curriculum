@@ -1,0 +1,6 @@
+pylint
+requests
+mecab
+numpy
+pandas
+matplotlib
