@@ -18,6 +18,16 @@ RUN pip install --no-cache-dir -r requirements.txt
 # インストールに使用したファイルを削除
 RUN rm -rf /work/*
 
+# Provide password-less sudo to NB_USER
+RUN \
+    sed -i /etc/sudoers -re 's/^%sudo.*/%sudo ALL=(ALL:ALL) NOPASSWD: ALL/g' && \
+    sed -i /etc/sudoers -re 's/^root.*/root ALL=(ALL:ALL) NOPASSWD: ALL/g' && \
+    sed -i /etc/sudoers -re 's/^#includedir.*/## **Removed the include directive** ##"/g' && \
+    echo "${NB_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \  
+    chmod g+w /etc/passwd
+
+USER $NB_UID
+
 # 通常ユーザーに戻す
 USER jovyan
 
