@@ -14,7 +14,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1   
-      - uses: actions/checkout@v2
       - name: run download script
         run: ./download_r4.sh
       - name: commit & push
