@@ -1,0 +1,45 @@
+name: process_r4
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Process_R4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1   
+      - name: run script
+        run: ./download_r4.sh
+      - name: Count changes
+        id: changes
+        run: |
+          git add -N . # 新規ファイルを含める
+          echo "::set-output name=count::$(git diff --name-only | wc -l)"      
+      - name: make united CSV and Markdown
+        uses: docker://ghcr.io/ncukondo/python-science-ja 
+        with:
+          args: 'python r4_processor.py'       
+        if: steps.changes.outputs.count > 0
+      - name: make pdf
+        uses: docker://ghcr.io/ncukondo/pandoc-latex-ja
+        with:
+          args: '-V classoption="pandoc" -V documentclass=bxjsarticle --pdf-engine=xelatex --filter=pandoc-crossref ./dist/r4.md -o ./dist/r4.pdf'       
+        if: steps.changes.outputs.count > 0
+      - name: make docx
+        uses: docker://ghcr.io/ncukondo/pandoc-latex-ja
+        with:
+          args: './dist/r4_to_edit.md -o ./dist/r4_to_edit.docx'       
+        if: steps.changes.outputs.count > 0
+      - name: commit & push
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Updated from Google Sheet"
+          git push
+        if: steps.changes.outputs.count > 0
