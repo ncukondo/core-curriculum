@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1   
-      - name: make united CSV and Md
+      - name: make united CSV and Markdown
         uses: docker://ghcr.io/ncukondo/python-science-ja #このステップだけで起動するコンテナイメージ
         with:
           args: 'python r4_processor.py'       

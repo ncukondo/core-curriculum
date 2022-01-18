@@ -42,7 +42,17 @@ r4_to_md["第2層"]="\n"+"## "+r4_full["第2層"]+"\n\n"+r4_full["第2層説明"
 r4_to_md["第3層"]="\n"+"### "+r4_full["第3層"]+"\n"
 r4_to_md["第4層"]="1. "+r4_full["第4層"]
 
+r4_md_to_edit=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
+r4_md_to_edit["第1層"]="\n"+"# "+r4_full["第1層"]+"(第1層)\n\n"+r4_full["第1層説明"]+"\n"
+r4_md_to_edit["第2層"]="\n"+"## "+r4_full["第2層"]+"(第2層)\n\n"+r4_full["第2層説明"]+"\n"
+r4_md_to_edit["第3層"]="\n"+"### "+r4_full["第3層"]+"\n"
+r4_md_to_edit["第4層"]="1. "+r4_full["第4層"]
+
 r4_md_text=dataframe_to_text(r4_to_md)
 with open("./dist/r4.md","w") as f:
     f.write(r4_md_text)
+
+r4_md_text_to_edit=dataframe_to_text(r4_md_to_edit)
+with open("./dist/r4_to_edit.md","w") as f:
+    f.write(r4_md_text_to_edit)
 
