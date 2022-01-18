@@ -26,15 +26,14 @@ def dataframe_to_text(data:pd.DataFrame):
     def accum_col(data:pd.DataFrame):
         col_1=data.columns.values[-1]
         col_2=data.columns.values[-2]
-        data=pd.DataFrame({col_1:data.groupby(col_to(data,-1))[col_1].agg(lambda x:"\n".join(list(x)))}).reset_index()
+        data=data.groupby(col_to(data,-1), as_index=False,sort=False).agg(lambda x:"\n".join(list(x)))
         data[col_2]=data[col_2]+"\n"+data[col_1]
         return data.drop(col_1,axis=1)
 
-    output = pd.concat([pd.DataFrame({"$index":data.index}),data],axis=1)
-    for _ in range(1,len(output.columns)-1):
-        output=accum_col(output)
+    for _ in range(1,len(data.columns)):
+        data=accum_col(data)
 
-    return '\n'.join(list(output.iloc[:,1]))
+    return '\n'.join(list(data.iloc[:,0]))
 
 r4_full=r4_full.fillna("")
 r4_to_md=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
