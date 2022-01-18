@@ -30,10 +30,11 @@ def dataframe_to_text(data:pd.DataFrame):
         data[col_2]=data[col_2]+"\n"+data[col_1]
         return data.drop(col_1,axis=1)
 
-    for _ in range(1,len(data.columns)):
-        data=accum_col(data)
+    output = pd.concat([pd.DataFrame({"$index":data.index}),data],axis=1)
+    for _ in range(1,len(output.columns)-1):
+        output=accum_col(output)
 
-    return "\n".join(list(data.iloc[:,0]))
+    return '\n'.join(list(output.iloc[:,1]))
 
 r4_full=r4_full.fillna("")
 r4_to_md=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
@@ -55,4 +56,3 @@ with open("./dist/r4.md","w") as f:
 r4_md_text_to_edit=dataframe_to_text(r4_md_to_edit)
 with open("./dist/r4_to_edit.md","w") as f:
     f.write(r4_md_text_to_edit)
-
