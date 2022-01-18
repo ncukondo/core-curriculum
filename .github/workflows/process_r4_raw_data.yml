@@ -1,0 +1,39 @@
+name: process_r4_raw_data
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - './raw/**.csv'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Process_R4_Raw_Data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1   
+      - name: make united CSV and Md
+        uses: docker://ghcr.io/ncukondo/python-science-ja #このステップだけで起動するコンテナイメージ
+        with:
+          args: 'python r4_processor.py'       
+      - name: commit & push
+        run: |
+          git add -N . # 新規ファイルを含める
+          if ! git diff --exit-code --quiet
+          then
+            echo change ditected update reposistory
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add .
+            git commit -m "Updated from Google Sheet"
+            git push
+          else
+            echo no change
+          fi

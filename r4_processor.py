@@ -6,11 +6,12 @@ r4_l1=pd.read_csv("./raw/R4_L1.csv")
 r4_l2=pd.read_csv("./raw/R4_L2.csv")
 
 
-files = glob.glob("./raw/R4_L3L4*.csv")
-r4_l234 = pd.DataFrame(data=[],columns=["第2層","第3層","第4層","メモ"])
-for file in files:
-    r4_l34_unit=pd.read_csv(file)
-    r4_l234=pd.concat([r4_l234,r4_l34_unit.loc[:,["第2層","第3層","第4層","メモ"]]])
+columns=["第2層","第3層","第4層","メモ"]
+r4_l234 = pd.DataFrame(data=[],columns=columns)
+tabs=r4_l1["タブ名"]
+for tab in tabs:
+    r4_l34_unit=pd.read_csv(f"./raw/R4_L3L4_{tab}.csv")
+    r4_l234=pd.concat([r4_l234,r4_l34_unit.loc[:,columns]])
 
 r4_l12=pd.merge(r4_l1,r4_l2,how="outer").iloc[:,[0,1,2,3,4]]
 r4_full=pd.merge(r4_l12,r4_l234,how="outer")
@@ -36,9 +37,9 @@ def dataframe_to_text(data:pd.DataFrame):
 
 r4_full=r4_full.fillna("")
 r4_to_md=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
-r4_to_md["第1層"]="# "+r4_full["第1層"]+"\n\n"+r4_full["第1層説明"]
-r4_to_md["第2層"]="## "+r4_full["第2層"]+"\n\n"+r4_full["第2層説明"]
-r4_to_md["第3層"]="### "+r4_full["第3層"]
+r4_to_md["第1層"]="\n"+"# "+r4_full["第1層"]+"\n\n"+r4_full["第1層説明"]+"\n"
+r4_to_md["第2層"]="\n"+"## "+r4_full["第2層"]+"\n\n"+r4_full["第2層説明"]+"\n"
+r4_to_md["第3層"]="\n"+"### "+r4_full["第3層"]+"\n"
 r4_to_md["第4層"]="1. "+r4_full["第4層"]
 
 r4_md_text=dataframe_to_text(r4_to_md)
