@@ -1,6 +1,6 @@
 import pandas as pd
 import glob
-
+import csv
 
 r4_l1=pd.read_csv("./raw/R4_L1.csv")
 r4_l2=pd.read_csv("./raw/R4_L2.csv")
@@ -15,9 +15,9 @@ for tab in tabs:
 
 r4_l12=pd.merge(r4_l1,r4_l2,how="outer").iloc[:,[0,1,2,3,4]]
 r4_full=pd.merge(r4_l12,r4_l234,how="outer")
-r4_full.to_csv("./dist/r4_full.csv",encoding="utf_8_sig")
+r4_full.to_csv("./dist/r4_full.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
 r4_no_disc=r4_full.loc[:,["第1層","第2層","第3層","第4層"]]
-r4_no_disc.to_csv("./dist/r4_no_disc.csv",encoding="utf_8_sig")
+r4_no_disc.to_csv("./dist/r4_no_disc.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
 
 def dataframe_to_text(data:pd.DataFrame):
     def col_to(data:pd.DataFrame,index:int):
