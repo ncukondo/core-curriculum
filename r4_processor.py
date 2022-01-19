@@ -4,9 +4,9 @@
 import csv
 import pandas as pd
 
+
 r4_l1=pd.read_csv("./raw/R4_L1.csv")
 r4_l2=pd.read_csv("./raw/R4_L2.csv")
-
 
 columns=["第2層","第3層","第4層","メモ"]
 r4_l234 = pd.DataFrame(data=[],columns=columns)
@@ -21,6 +21,30 @@ r4_full.to_csv("./dist/r4_full.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNU
 r4_no_disc=r4_full.loc[:,["第1層","第2層","第3層","第4層"]]
 r4_no_disc.to_csv("./dist/r4_no_disc.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
 
+
+# output ordered table for comments
+order=["プロ", "総合", "生涯", "科学", "情報", "コミュ", "連携", "社会", "技能", "知識" ]
+order_dict=pd.DataFrame({"order":[i for i,v in enumerate(order)],"タブ名":order})
+r4_ordered=pd\
+    .merge(r4_full,order_dict,how="left",on="タブ名")\
+    .sort_values(by="order",kind="mergesort")\
+    .drop("order",axis=1)
+r4_ordered\
+    .to_csv("./dist/r4_full_ordered.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
+r4_ordered \
+    .loc[:,["第1層","第2層","第3層","第4層"]]\
+    .groupby(["第1層","第2層","第3層"], as_index=False,sort=False)\
+    .sum()\
+    .drop("第4層",axis=1)\
+    .to_csv("./dist/r4_l123_ordered.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
+r4_ordered \
+    .loc[:,["第1層","第2層","第2層説明","第3層"]]\
+    .groupby(["第1層","第2層","第2層説明",], as_index=False,sort=False)\
+    .sum()\
+    .drop("第3層",axis=1)\
+    .to_csv("./dist/r4_l12_ordered.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
+
+
 def dataframe_to_text(data:pd.DataFrame):
     def col_to(data:pd.DataFrame,index:int):
         return list(data.columns.values[0:index])
@@ -28,7 +52,9 @@ def dataframe_to_text(data:pd.DataFrame):
     def accum_col(data:pd.DataFrame):
         col_1=data.columns.values[-1]
         col_2=data.columns.values[-2]
-        data=data.groupby(col_to(data,-1), as_index=False,sort=False).agg(lambda x:"\n".join(list(x)))
+        data=data\
+            .groupby(col_to(data,-1), as_index=False,sort=False)\
+            .agg(lambda x:"\n".join(list(x)))
         data[col_2]=data[col_2]+"\n"+data[col_1]
         return data.drop(col_1,axis=1)
 
