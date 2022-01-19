@@ -1,6 +1,8 @@
-import pandas as pd
-import glob
+#!/usr/bin/env python
+# coding: utf-8
+
 import csv
+import pandas as pd
 
 r4_l1=pd.read_csv("./raw/R4_L1.csv")
 r4_l2=pd.read_csv("./raw/R4_L2.csv")
