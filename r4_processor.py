@@ -38,6 +38,8 @@ def dataframe_to_text(data:pd.DataFrame):
     return '\n'.join(list(data.iloc[:,0]))
 
 r4_full=r4_full.fillna("")
+print(list(r4_full.columns.values))
+
 r4_to_md=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
 r4_to_md["第1層"]="\n"+"# "+r4_full["第1層"]+"\n\n"+r4_full["第1層説明"]+"\n"
 r4_to_md["第2層"]="\n"+"## "+r4_full["第2層"]+"\n\n"+r4_full["第2層説明"]+"\n"
