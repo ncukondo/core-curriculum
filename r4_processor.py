@@ -15,7 +15,7 @@ for tab in tabs:
     r4_l34_unit=pd.read_csv(f"./raw/R4_L3L4_{tab}.csv")
     r4_l234=pd.concat([r4_l234,r4_l34_unit.loc[:,columns]])
 
-r4_l12=pd.merge(r4_l1,r4_l2,how="outer").iloc[:,[0,1,2,3,4]]
+r4_l12=pd.merge(r4_l1,r4_l2,how="outer").rename(columns={"メモ":"第2層メモ"})
 r4_full=pd.merge(r4_l12,r4_l234,how="outer")
 r4_full.to_csv("./dist/r4_full.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC)
 r4_no_disc=r4_full.loc[:,["第1層","第2層","第3層","第4層"]]
@@ -38,7 +38,6 @@ def dataframe_to_text(data:pd.DataFrame):
     return '\n'.join(list(data.iloc[:,0]))
 
 r4_full=r4_full.fillna("")
-print(list(r4_full.columns.values))
 
 r4_to_md=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
 r4_to_md["第1層"]="\n"+"# "+r4_full["第1層"]+"\n\n"+r4_full["第1層説明"]+"\n"
