@@ -23,3 +23,6 @@ docx: csv_and_md
 
 raw_csv:
 	bash download_r4.sh
+
+draft_csv:
+	bash download_r4.sh r4_draft_gsheets.csv
