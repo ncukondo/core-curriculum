@@ -6,3 +6,4 @@ matplotlib
 spacy
 ginza
 ja_ginza_electra
+openpyxlm
