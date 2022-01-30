@@ -26,10 +26,9 @@ RUN \
     echo "${NB_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \  
     chmod g+w /etc/passwd
 
+# 通常ユーザーに戻す
 USER $NB_UID
 
-# 通常ユーザーに戻す
-USER jovyan
 
 # matplotlibのフォントキャッシュ削除
 RUN rm -rf ~/.cache/matplotlib
