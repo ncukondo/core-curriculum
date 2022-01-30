@@ -8,3 +8,8 @@ ginza
 ja_ginza_electra
 openpyxl
 jaconv
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+gspread
+oauth2client
