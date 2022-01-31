@@ -22,10 +22,21 @@ readline() {
 }
 
 trim() {
-  echo $1 | sed 's/^ *\| *$//' 
+  echo $* | sed 's/^ *| *$//' 
 }
 
-cat $inputFile |  while IFS=\= read key value; do
-  echo adding github secret\(repo:$repo\)... key=$key, value=$value
+escape_backslash() {
+  sed 's/\\/\\\\/g' 
+}
+
+
+cat $inputFile \
+| escape_backslash \
+| ensure_return \
+| skip_empty \
+| while IFS=\= read key value; do
+  key=$(trim $key)
+  value=$(trim $value)
+  echo adding github secret\(repo:$repo\)... key="${key}", value="${value}"
   gh secret set $key -b"${value}" --repos="${repo}"
 done 
