@@ -22,23 +22,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1   
-      - name: Create ./client_secret.json
-        run: |
-          echo $(cat <<-EOS
-          {
-            "type": "${GAUTH_TYPE}",
-            "project_id": "${GAUTH_PROJECT_ID}",
-            "private_key_id":"${GAUTH_PRIVATE_KEY_ID}",
-            "private_key": "${GAUTH_PRIVATE_KEY}",
-            "client_email": "${GAUTH_CLIENT_EMAIL}",
-            "client_id": "${GAUTH_CLIENT_ID}",
-            "auth_uri": "${GAUTH_AUTH_URI}",
-            "token_uri": "${GAUTH_TOKEN_URI}",
-            "auth_provider_x509_cert_url": "${GAUTH_AUTH_PROVIDER_X509_CERT_URL}",
-            "client_x509_cert_url": "${GAUTH_CLIENT_X509_CERT_URL}"            
-          }
-          EOS
-          ) > ./client_secret.json
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
