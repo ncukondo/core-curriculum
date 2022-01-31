@@ -26,16 +26,16 @@ jobs:
         run: |
           echo $(cat <<-EOS
           {
-            "type": "${{ secrets.GAUTH_TYPE }}",
-            "project_id": "${{ secrets.GAUTH_PROJECT_ID }}",
-            "private_key_id":"${{ secrets.GAUTH_PRIVATE_KEY_ID }}",
-            "private_key": "${{ secrets.GAUTH_PRIVATE_KEY }}",
-            "client_email": "${{ secrets.GAUTH_CLIENT_EMAIL }}",
-            "client_id": "${{ secrets.GAUTH_CLIENT_ID }}",
-            "auth_uri": "${{ secrets.GAUTH_AUTH_URI }}",
-            "token_uri": "${{ secrets.GAUTH_TOKEN_URI }}",
-            "auth_provider_x509_cert_url": "${{ secrets.GAUTH_AUTH_PROVIDER_X509_CERT_URL }}",
-            "client_x509_cert_url": "${{ secrets.GAUTH_CLIENT_X509_CERT_URL }}"            
+            "type": "${GAUTH_TYPE}",
+            "project_id": "${GAUTH_PROJECT_ID}",
+            "private_key_id":"${GAUTH_PRIVATE_KEY_ID}",
+            "private_key": "${GAUTH_PRIVATE_KEY}",
+            "client_email": "${GAUTH_CLIENT_EMAIL}",
+            "client_id": "${GAUTH_CLIENT_ID}",
+            "auth_uri": "${GAUTH_AUTH_URI}",
+            "token_uri": "${GAUTH_TOKEN_URI}",
+            "auth_provider_x509_cert_url": "${GAUTH_AUTH_PROVIDER_X509_CERT_URL}",
+            "client_x509_cert_url": "${GAUTH_CLIENT_X509_CERT_URL}"            
           }
           EOS
           ) > ./client_secret.json
