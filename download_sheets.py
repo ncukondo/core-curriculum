@@ -37,9 +37,10 @@ client_secret=f'''
 {"}"}
 '''
 
+'''
 with open("./client_secret.json","w") as f:
     f.write(client_secret)
-
+'''
 def get_creds(scopes:list,client_secret_file:str):
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
         "./client_secret.json",
