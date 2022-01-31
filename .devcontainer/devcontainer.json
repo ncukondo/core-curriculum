@@ -9,6 +9,7 @@
 		"JUPYTER_ENABLE_LAB":"yes",
 		"GRANT_SUDO":"yes"
 	},
+	"runArgs": ["--env-file","./client_secret.env"],
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
