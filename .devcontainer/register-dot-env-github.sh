@@ -25,9 +25,7 @@ trim() {
   echo $1 | sed 's/^ *\| *$//' 
 }
 
-cat $inputFile | skip_empty | ensure_return | while IFS=\= read key value; do
-  key=$(trim ${key})
-  value=$(trim ${value})
+cat $inputFile |  while IFS=\= read key value; do
   echo adding github secret\(repo:$repo\)... key=$key, value=$value
   gh secret set $key -b"${value}" --repos="${repo}"
 done 
