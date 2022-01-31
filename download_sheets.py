@@ -11,18 +11,29 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import pandas as pd
 
+GAUTH_TYPE=os.environ.get('GAUTH_TYPE')
+GAUTH_PROJECT_ID=os.environ.get('GAUTH_PROJECT_ID')
+GAUTH_PRIVATE_KEY_ID=os.environ.get('GAUTH_PRIVATE_KEY_ID')
+GAUTH_PRIVATE_KEY=os.environ.get('GAUTH_PRIVATE_KEY')
+GAUTH_CLIENT_EMAIL=os.environ.get('GAUTH_CLIENT_EMAIL')
+GAUTH_CLIENT_ID=os.environ.get('GAUTH_CLIENT_ID')
+GAUTH_AUTH_URI=os.environ.get('GAUTH_AUTH_URI')
+GAUTH_TOKEN_URI=os.environ.get('GAUTH_TOKEN_URI')
+GAUTH_AUTH_PROVIDER_X509_CERT_URL=os.environ.get('GAUTH_AUTH_PROVIDER_X509_CERT_URL')
+GAUTH_CLIENT_X509_CERT_URL=os.environ.get('GAUTH_CLIENT_X509_CERT_URL')
+
 client_secret=f'''
 {"{"}
-    "type": "{os.environ['GAUTH_TYPE']}",
-    "project_id": "{os.environ['GAUTH_PROJECT_ID']}",
-    "private_key_id": "{os.environ['GAUTH_PRIVATE_KEY_ID']}",
-    "private_key": "{os.environ['GAUTH_PRIVATE_KEY']}",
-    "client_email": "{os.environ['GAUTH_CLIENT_EMAIL']}",
-    "client_id": "{os.environ['GAUTH_CLIENT_ID']}",
-    "auth_uri": "{os.environ['GAUTH_AUTH_URI']}",
-    "token_uri": "{os.environ['GAUTH_TOKEN_URI']}",
-    "auth_provider_x509_cert_url": "{os.environ['GAUTH_AUTH_PROVIDER_X509_CERT_URL']}",
-    "client_x509_cert_url": "{os.environ['GAUTH_CLIENT_X509_CERT_URL']}"
+    "type":"{GAUTH_TYPE}",
+    "project_id":"{GAUTH_PROJECT_ID}",
+    "private_key_id":"{GAUTH_PRIVATE_KEY_ID}",
+    "private_key":"{GAUTH_PRIVATE_KEY}",
+    "client_email":"{GAUTH_CLIENT_EMAIL}",
+    "client_id":"{GAUTH_CLIENT_ID}",
+    "auth_uri":"{GAUTH_AUTH_URI}",
+    "token_uri":"{GAUTH_TOKEN_URI}",
+    "auth_provider_x509_cert_url":"{GAUTH_AUTH_PROVIDER_X509_CERT_URL}",
+    "client_x509_cert_url":"{GAUTH_CLIENT_X509_CERT_URL}"
 {"}"}
 '''
 
@@ -53,17 +64,20 @@ for i,url in enumerate(list(info["url"])):
         modified_recorded=parser.parse("1980-10-06 12:00Z")
     lastUpdate=spreadsheet.lastUpdateTime
     modified=parser.parse(lastUpdate)
-    info.at[i,"lastUpDate"]=lastUpdate
     print(f"{sheet_name} - Updated:{modified > modified_recorded}")
 
-    if modified > modified_recorded:
-        for sheet in list(spreadsheet.worksheets()):
-            dir = f"./raw/gsheets/{sheet_name}"
-            os.makedirs(dir, exist_ok=True)
-            name=f'{sheet.title}'
-            data = pd.DataFrame(sheet.get_all_records())
-            print(f'saving {dir}/{sheet.title}.csv')
-            data.to_csv(f"{dir}/{sheet.title}.csv",encoding="utf_8_sig",index=False)
+    try:
+        if modified > modified_recorded:
+            for sheet in list(spreadsheet.worksheets()):
+                dir = f"./raw/gsheets/{sheet_name}"
+                os.makedirs(dir, exist_ok=True)
+                name=f'{sheet.title}'
+                data = pd.DataFrame(sheet.get_all_records())
+                print(f'saving {dir}/{sheet.title}.csv')
+                data.to_csv(f"{dir}/{sheet.title}.csv",encoding="utf_8_sig",index=False)
+        info.at[i,"lastUpDate"]=lastUpdate
+    except:
+        print("APIError")
 
 info.to_csv("./r4_gsheets_info.csv",encoding="utf_8_sig",index=False)
 
