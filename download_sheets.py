@@ -6,30 +6,25 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import pandas as pd
 
-GAUTH_TYPE=os.environ.get('GAUTH_TYPE')
-GAUTH_PROJECT_ID=os.environ.get('GAUTH_PROJECT_ID')
-GAUTH_PRIVATE_KEY_ID=os.environ.get('GAUTH_PRIVATE_KEY_ID')
-GAUTH_PRIVATE_KEY=os.environ.get('GAUTH_PRIVATE_KEY')
-GAUTH_CLIENT_EMAIL=os.environ.get('GAUTH_CLIENT_EMAIL')
-GAUTH_CLIENT_ID=os.environ.get('GAUTH_CLIENT_ID')
-GAUTH_AUTH_URI=os.environ.get('GAUTH_AUTH_URI')
-GAUTH_TOKEN_URI=os.environ.get('GAUTH_TOKEN_URI')
-GAUTH_AUTH_PROVIDER_X509_CERT_URL=os.environ.get('GAUTH_AUTH_PROVIDER_X509_CERT_URL')
-GAUTH_CLIENT_X509_CERT_URL=os.environ.get('GAUTH_CLIENT_X509_CERT_URL')
 
+keyList=[
+    "type",
+    "project_id",
+    "private_key_id",
+    "private_key",
+    "client_email",
+    "client_id",
+    "auth_uri",
+    "token_uri",
+    "auth_provider_x509_cert_url",
+    "client_x509_cert_url"
+]
+client_secret_list =[f'"{key}": "{os.environ["GAUTH_"+key.upper()]}"' for key in keyList]
+comma=',\n    '
 client_secret=f'''
-{"{"}
-    "type":"{GAUTH_TYPE}",
-    "project_id":"{GAUTH_PROJECT_ID}",
-    "private_key_id":"{GAUTH_PRIVATE_KEY_ID}",
-    "private_key":"{GAUTH_PRIVATE_KEY}",
-    "client_email":"{GAUTH_CLIENT_EMAIL}",
-    "client_id":"{GAUTH_CLIENT_ID}",
-    "auth_uri":"{GAUTH_AUTH_URI}",
-    "token_uri":"{GAUTH_TOKEN_URI}",
-    "auth_provider_x509_cert_url":"{GAUTH_AUTH_PROVIDER_X509_CERT_URL}",
-    "client_x509_cert_url":"{GAUTH_CLIENT_X509_CERT_URL}"
-{"}"}
+{{
+    {comma.join(client_secret_list)}
+}}
 '''
 
 def get_creds(scopes:list):
