@@ -1,47 +1,9 @@
 import os.path
 import os
-import json
 from dateutil import parser
-from oauth2client.service_account import ServiceAccountCredentials
-import gspread
 import pandas as pd
+from lib.google_spread import get_sheetapp
 
-
-keyList=[
-    "type",
-    "project_id",
-    "private_key_id",
-    "private_key",
-    "client_email",
-    "client_id",
-    "auth_uri",
-    "token_uri",
-    "auth_provider_x509_cert_url",
-    "client_x509_cert_url"
-]
-client_secret_list =[f'"{key}": "{os.environ["GAUTH_"+key.upper()]}"' for key in keyList]
-comma=',\n    '
-client_secret=f'''
-{{
-    {comma.join(client_secret_list)}
-}}
-'''
-
-def get_creds(scopes:list):
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-        json.loads(client_secret),
-        scopes=scopes
-    )
-    return credentials
-
-_sheet_app:gspread.Client=None
-def get_sheetapp()->gspread.Client:
-    global _sheet_app
-    if _sheet_app==None:
-        _sheet_app=gspread.authorize(get_creds([
-            'https://spreadsheets.google.com/feeds',
-            'https://www.googleapis.com/auth/drive']))
-    return _sheet_app
 
 info=pd.read_csv("./r4_gsheets_info.csv")
 try:
