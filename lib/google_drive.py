@@ -3,6 +3,7 @@ import mimetypes
 import os
 import io
 import enum
+from dateutil.parser import parse
 
 from google_auth import get_creds
 from google.oauth2.credentials import Credentials
@@ -28,6 +29,70 @@ class FileExtType(enum.Enum):
     DOCX = "docx"
     PDF = "pdf"
     HTML = "html"
+
+class FileFieldType(enum.Enum):
+    """ class represents Fields when getting file """
+    KIND="kind"
+    ID="id"
+    NAME="name"
+    MIMETYPE="mimeType"
+    DESCRIPTION="description"
+    STARRED="starred"
+    TRASHED="trashed"
+    EXPLICITLYTRASHED="explicitlyTrashed"
+    TRASHINGUSER="trashingUser"
+    TRASHEDTIME="trashedTime"
+    PARENTS="parents"
+    PROPERTIES="properties"
+    APPPROPERTIES="appProperties"
+    SPACES="spaces"
+    VERSION="version"
+    WEBCONTENTLINK="webContentLink"
+    WEBVIEWLINK="webViewLink"
+    ICONLINK="iconLink"
+    HASTHUMBNAIL="hasThumbnail"
+    THUMBNAILLINK="thumbnailLink"
+    THUMBNAILVERSION="thumbnailVersion"
+    VIEWEDBYME="viewedByMe"
+    VIEWEDBYMETIME="viewedByMeTime"
+    CREATEDTIME="createdTime"
+    MODIFIEDTIME="modifiedTime"
+    MODIFIEDBYMETIME="modifiedByMeTime"
+    MODIFIEDBYME="modifiedByMe"
+    SHAREDWITHMETIME="sharedWithMeTime"
+    SHARINGUSER="sharingUser"
+    OWNERS="owners"
+    TEAMDRIVEID="teamDriveId"
+    DRIVEID="driveId"
+    LASTMODIFYINGUSER="lastModifyingUser"
+    SHARED="shared"
+    OWNEDBYME="ownedByMe"
+    CAPABILITIES="capabilities"
+    VIEWERSCANCOPYCONTENT="viewersCanCopyContent"
+    COPYREQUIRESWRITERPERMISSION="copyRequiresWriterPermission"
+    WRITERSCANSHARE="writersCanShare"
+    PERMISSIONS="permissions"
+    PERMISSIONIDS="permissionIds"
+    HASAUGMENTEDPERMISSIONS="hasAugmentedPermissions"
+    FOLDERCOLORRGB="folderColorRgb"
+    ORIGINALFILENAME="originalFilename"
+    FULLFILEEXTENSION="fullFileExtension"
+    FILEEXTENSION="fileExtension"
+    MD5CHECKSUM="md5Checksum"
+    SIZE="size"
+    QUOTABYTESUSED="quotaBytesUsed"
+    HEADREVISIONID="headRevisionId"
+    CONTENTHINTS="contentHints"
+    INDEXABLETEXT="indexableText"
+    IMAGEMEDIAMETADATA="imageMediaMetadata"
+    VIDEOMEDIAMETADATA="videoMediaMetadata"
+    ISAPPAUTHORIZED="isAppAuthorized"
+    EXPORTLINKS="exportLinks"
+    SHORTCUTDETAILS="shortcutDetails"
+    CONTENTRESTRICTIONS="contentRestrictions"
+    RESOURCEKEY="resourceKey"
+    LINKSHAREMETADATA="linkShareMetadata"
+
 
 
 API_SERVICE_NAME = "drive"
@@ -95,12 +160,52 @@ class GoogleDrive:
             _, done = downloader.next_chunk()
         return done
 
+    def file_info(self,file_id:str,fields:list[FileFieldType]=["id","name"]):
+        """ get file info from drive """
+        return self.service.files().get(
+            fileId=file_id,
+            fields=",".join(fields),
+            supportsAllDrives=True).execute()
+
+    def list_in_folder(self,folder_id:str,fields:list[FileFieldType]=["id","name","modifiedTime","parents"]):
+        """ list files in folder """
+        page_token = None
+        query = " and ".join([
+            f"'{folder_id}' in parents"
+        ])
+        while True:
+            response = self.service.files().list(
+                spaces='drive',
+                corpora="user",
+                q=query,
+                includeItemsFromAllDrives=True,
+                supportsAllDrives=True,
+                pageSize=50,
+                fields=f'nextPageToken, files({",".join(fields)})',
+                pageToken=page_token
+            ).execute()
+            for file in response.get('files', []):
+                for key,value in file.items():
+                    if key.endswith("Time"):
+                        file[key]=parse(value)
+                yield file
+            page_token = response.get('nextPageToken', None)
+            if page_token is None:
+                break
+
 
 
 def main():
     print(mimetypes.guess_type("sample.xlsx")[0])
-    from_service_account().export(
-        "1Dg2QAub4L0Hjxoby-tl3REQSMk8AvKt4h2_UVbufVvc",FileExtType.xlsx)
+    file_list=from_service_account().list_in_folder(
+        "1NrjWTGweLNoUU1n-EH9yhIU5ZBUHOLs1",
+        ["id","name","modifiedTime","parents"])
+    for file in file_list:
+        print(file)
+    info = from_service_account().file_info("1UmKJiKjrNjweJFSRg_cpqOw3SbWrdH5VHhja9AR_rtc",["name","modifiedTime","parents"])
+    print(info)
+    #from_service_account().export(
+    #    "1Dg2QAub4L0Hjxoby-tl3REQSMk8AvKt4h2_UVbufVvc",FileExtType.XLSX)
 
 if __name__ == '__main__':
     main()
