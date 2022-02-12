@@ -7,7 +7,7 @@ d_run:=docker run --rm --volume "${pwd}:/data" --user ${uid}:${gid} ${repo}
 docs: pdf docx
 
 csv_and_md:
-	${d_run}python-science-ja python r4_processor.py
+	${d_run}python-process-sheets python r4_processor.py
 
 pdf: csv_and_md
 	${d_run}pandoc-latex-ja \
@@ -22,7 +22,7 @@ docx: csv_and_md
 	${d_run}pandoc-latex-ja ./dist/r4_to_edit.md -o ./dist/r4_to_edit.docx
 
 raw_csv:
-	bash download_r4.sh
+	${d_run}python-process-sheets python download_sheets.py
 
 draft_csv:
 	bash download_r4.sh r4_draft_gsheets.csv

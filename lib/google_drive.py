@@ -5,7 +5,7 @@ import io
 import enum
 from dateutil.parser import parse
 
-from google_auth import get_creds
+from lib.google_auth import get_creds
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -128,7 +128,7 @@ class GoogleDrive:
         ).execute()
         return drive_file.get("id")
 
-    def download(self,file_id:str,dest_path:str=".")->bool:
+    def download(self,file_id:str,dest_path:str=".")->str:
         """ download content from drive """
         file=self.service.files().get(
             fileId=file_id,
@@ -140,14 +140,14 @@ class GoogleDrive:
         done = False
         while not done:
             _, done = downloader.next_chunk()
-        return done
+        return path
 
-    def export(self,file_id:str,file_type:FileExtType,dest_path:str=".")->bool:
+    def export(self,file_id:str,file_type:FileExtType,dest_path:str=".")->str:
         """ export google doc/sheet from drive """
         file=self.service.files().get(
             fileId=file_id,
             supportsAllDrives=True).execute()
-        ext = str(file_type)
+        ext = str(file_type).lower()
         mime_type= mimetypes.guess_type(f"sample.{ext}")[0]
         path = os.path.join(dest_path,file["name"]+"."+ext)
         request = self.service.files().export_media(
@@ -158,21 +158,22 @@ class GoogleDrive:
         done = False
         while not done:
             _, done = downloader.next_chunk()
-        return done
+        return path
 
-    def file_info(self,file_id:str,fields:list[FileFieldType]=["id","name"]):
+    def file_info(self,file_id:str,fields:list[FileFieldType]=None):
         """ get file info from drive """
+        if fields is None:
+            fields=["id","name"]
         return self.service.files().get(
             fileId=file_id,
             fields=",".join(fields),
             supportsAllDrives=True).execute()
 
-    def list_in_folder(self,folder_id:str,fields:list[FileFieldType]=["id","name","modifiedTime","parents"]):
+    def get_list(self,query:str,fields:list[FileFieldType]=None):
         """ list files in folder """
+        if fields is None:
+            fields=["id","name","modifiedTime","parents"]
         page_token = None
-        query = " and ".join([
-            f"'{folder_id}' in parents"
-        ])
         while True:
             response = self.service.files().list(
                 spaces='drive',
@@ -193,6 +194,11 @@ class GoogleDrive:
             if page_token is None:
                 break
 
+
+    def list_in_folder(self,folder_id:str,fields:list[FileFieldType]=None):
+        """ list files in folder """
+        query = f"'{folder_id}' in parents"
+        return self.get_list(query,fields)
 
 
 def main():
