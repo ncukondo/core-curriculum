@@ -21,8 +21,6 @@ def export_google_sheets(folder_ids:list[str],dist_dir:str=None,info_stor_file:s
     with open(info_stor_file,"r",encoding="utf_8") as f:
         gsheets_info=json.load(f)
 
-    check_datetime=datetime.datetime.now(datetime.timezone.utc).isoformat()
-
     global_updated=gsheets_info.get("global",{}).get("updated",epoc_time)
     query="\n and \n".join([ 
         "mimeType='application/vnd.google-apps.spreadsheet'",
@@ -33,12 +31,12 @@ def export_google_sheets(folder_ids:list[str],dist_dir:str=None,info_stor_file:s
     try:
         file_list =drive.get_list(query,["name","id","modifiedTime"])
         for file in file_list:
-            timestamp=file["modifiedTime"].isoformat()
+            timestamp=file["modifiedTime"]
             file["timestamp"]=timestamp
-            old_time_stamp=gsheets_info\
+            last_recorded_time=gsheets_info\
                 .get("files",{}).get(file["id"],{})\
                 .get("timestamp",epoc_time)
-            if parse_date(timestamp) <= parse_date(old_time_stamp):
+            if parse_date(timestamp) <= parse_date(last_recorded_time):
                 print(f"skip: {file['name']}")
                 continue
             file["export_path"]=drive.export(file["id"],"xlsx",dist_dir)
@@ -46,9 +44,11 @@ def export_google_sheets(folder_ids:list[str],dist_dir:str=None,info_stor_file:s
             print(f'{file["name"]} in {timestamp}')
             gsheets_info["files"]=gsheets_info.get("files",{})
             gsheets_info["files"][file["id"]]={"timestamp":timestamp,"name":file["name"],"id":file["id"]}
+            if parse_date(global_updated) < parse_date(file["modifiedTime"]):
+                global_updated=file["modifiedTime"]
 
         gsheets_info["global"]=gsheets_info.get("global",{})
-        gsheets_info["global"]["updated"]=check_datetime
+        gsheets_info["global"]["updated"]=global_updated
     except:
         raise
     finally:

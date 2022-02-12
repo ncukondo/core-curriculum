@@ -1,6 +1,13 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[9]:
+
+
 import os
 import tempfile
 import pandas as pd
+import csv
 
 from lib.export_google_sheets import export_google_sheets
 
@@ -21,3 +28,4 @@ with tempfile.TemporaryDirectory() as temp_dir:
         for name in book.sheet_names:
             sheet:pd.DataFrame = book.parse(name)
             sheet.to_csv(os.path.join(dir_name,f"{name}.csv"),encoding="utf_8_sig",index=False,)
+

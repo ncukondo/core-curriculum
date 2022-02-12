@@ -186,9 +186,6 @@ class GoogleDrive:
                 pageToken=page_token
             ).execute()
             for file in response.get('files', []):
-                for key,value in file.items():
-                    if key.endswith("Time"):
-                        file[key]=parse(value)
                 yield file
             page_token = response.get('nextPageToken', None)
             if page_token is None:
