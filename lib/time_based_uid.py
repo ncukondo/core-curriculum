@@ -1,6 +1,7 @@
 import base64
 import datetime
 import time
+import bz2
 
 _LAST_TIME=0
 _EIDIAN = "big"
@@ -25,7 +26,8 @@ def decode_time_based_uid(uid:str)->datetime.datetime:
     '''
     decode uid from unix timestamp(milliseconds) to datetime
     '''
-    epoc_time = int.from_bytes(base64.urlsafe_b64decode((uid+"=").encode()), byteorder=_EIDIAN, signed=False)/_SIZE
+    decoded_bytes=base64.urlsafe_b64decode((uid+"=").encode())
+    epoc_time = int.from_bytes(decoded_bytes, byteorder=_EIDIAN, signed=False)/_SIZE
     dt =  datetime.datetime.fromtimestamp(epoc_time)
     return dt
 

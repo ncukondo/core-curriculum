@@ -1,37 +1,31 @@
-import os.path
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[9]:
+
+
 import os
-from dateutil import parser
+import tempfile
 import pandas as pd
-from lib.google_spread import get_sheetapp
+import csv
+
+from lib.export_google_sheets import export_google_sheets
 
 
-info=pd.read_csv("./r4_gsheets_info.csv")
-try:
-    for i,url in enumerate(list(info["url"])):
-        spreadsheet = get_sheetapp().open_by_url(url)
-        sheet_name=spreadsheet.title
-        modified_recorded=None
-        if str(info.at[i,"lastUpDate"])!="nan": 
-            modified_recorded=parser.parse(str(info.at[i,"lastUpDate"]))
-        else:
-            modified_recorded=parser.parse("1980-10-06 12:00Z")
-        lastUpdate=spreadsheet.lastUpdateTime
-        modified=parser.parse(lastUpdate)
-        print(f"{sheet_name} - Updated:{modified > modified_recorded}")
+folder_ids=[
+        '1HhIkzwUMBTfStSCyhSRf1SkbQq21hLnM',
+        '1NrjWTGweLNoUU1n-EH9yhIU5ZBUHOLs1',
+        '1FlCwwi71s1BI4uhOf2CefX85byj1Alo_'
+]
+DIST_DIR="./raw/sheets/"
 
-        if modified > modified_recorded:
-            for sheet in list(spreadsheet.worksheets()):
-                dir = f"./raw/gsheets/{sheet_name}"
-                os.makedirs(dir, exist_ok=True)
-                name=f'{sheet.title}'
-                data = pd.DataFrame(sheet.get_all_records())
-                print(f'saving {dir}/{sheet.title}.csv')
-                data.to_csv(f"{dir}/{sheet.title}.csv",encoding="utf_8_sig",index=False)
-        info.at[i,"lastUpDate"]=lastUpdate
-except:
-    print("APIError")
-
-info.to_csv("./r4_gsheets_info.csv",encoding="utf_8_sig",index=False)
-
-
+with tempfile.TemporaryDirectory() as temp_dir:
+    file_list=export_google_sheets(folder_ids,temp_dir)
+    for file in file_list:
+        book = pd.ExcelFile(file["export_path"])
+        dir_name = os.path.join(DIST_DIR,file['name'])
+        os.makedirs(dir_name,exist_ok=True)
+        for name in book.sheet_names:
+            sheet:pd.DataFrame = book.parse(name)
+            sheet.to_csv(os.path.join(dir_name,f"{name}.csv"),encoding="utf_8_sig",index=False,)
 
