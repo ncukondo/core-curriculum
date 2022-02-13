@@ -25,5 +25,5 @@ file_list= [
 ]
 for file_path in file_list:
     id=drive.update_by_name(file_path,folder_id)
-    print(f"upload {file_path} as {id}")
+    print(f"deploy {os.path.basename(file_path)} as {id}")
 
