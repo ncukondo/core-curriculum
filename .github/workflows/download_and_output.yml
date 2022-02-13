@@ -40,6 +40,11 @@ jobs:
       - name: make markdown and CSVs
         run: make markdown
         if: steps.changes.outputs.count > 0
+      - name: ouput docs(docx,pdf,draft docx, draft pdf)
+        run: |
+          make docs
+          make draft_docs
+        if: steps.changes.outputs.count > 0
       - name: commit & push
         run: |
           git config user.name github-actions

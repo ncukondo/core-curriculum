@@ -6,6 +6,8 @@ d_run:=docker run --rm --volume "${pwd}:/data" --user ${uid}:${gid} ${repo}
 
 docs: pdf docx
 
+draft_docs: draft_pdf draft_docx
+
 draft_docx: r4_draft_temp.html
 	${d_run}pandoc-latex-ja ./dist/r4_draft_temp.html -o ./dist/r4_draft.docx
 
