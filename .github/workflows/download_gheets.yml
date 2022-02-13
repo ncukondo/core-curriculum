@@ -30,13 +30,16 @@ jobs:
         run: python -V
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Run Python
-        run: python download_sheets.py
+      - name: download sheets
+        run: make raw_csv
       - name: Count changes
         id: changes
         run: |
           git add -N . # 新規ファイルを含める
           echo "::set-output name=count::$(git diff --name-only | wc -l)"   
+      - name: make markdown and CSVs
+        run: make markdown
+        if: steps.changes.outputs.count > 0
       - name: commit & push
         run: |
           git config user.name github-actions
