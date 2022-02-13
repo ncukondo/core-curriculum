@@ -14,3 +14,5 @@ google-auth-oauthlib
 gspread
 oauth2client
 tabulate
+jupyter
+
