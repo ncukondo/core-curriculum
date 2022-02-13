@@ -1,6 +1,8 @@
-name: Download Google Sheets
+name: Download Google Sheets and Output documents
 
 on:
+  schedule:
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
