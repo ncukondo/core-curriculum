@@ -4,6 +4,9 @@ gid:=$(shell id -g)
 repo=ghcr.io/ncukondo/
 d_run:=docker run --rm --volume "${pwd}:/data" --user ${uid}:${gid} ${repo}
 
+deploy:
+	python deploy_to_google_drive.py
+
 docs: pdf docx
 
 draft_docs: draft_pdf draft_docx
@@ -41,10 +44,10 @@ r4_draft_temp.html: markdown
 
 
 
-raw_csv: python_files
+raw_csv:
 	python download_sheets.py
 
-csv: python_files
+csv:
 	python output_csv.py
 
 markdown: csv
@@ -54,6 +57,7 @@ python_files:
 	jupyter nbconvert --to python download_sheets.ipynb
 	jupyter nbconvert --to python output_csv.ipynb
 	jupyter nbconvert --to python output_markdown.ipynb
+	jupyter nbconvert --to python deploy_to_google_drive.ipynb
 
 draft_csv:
 	bash download_r4.sh r4_draft_gsheets.csv

@@ -119,12 +119,38 @@ class GoogleDrive:
             'parents': [parent_id]
         }
         media = MediaFileUpload(
-            file, 
-            mimetype=mimetypes.guess_type(file)[0], 
+            file,
+            mimetype=mimetypes.guess_type(file)[0],
             resumable=True
         )
         drive_file = self.service.files().create(
-            body=file_metadata, media_body=media, fields='id'
+            body=file_metadata, media_body=media, fields='id',
+            supportsAllDrives=True,
+        ).execute()
+        return drive_file.get("id")
+
+    def update_by_name(self,local_path:str,parent_id:str):
+        """ update file of same name or upload file """
+        name = os.path.basename(local_path)
+        id=''
+        file_list = self.get_list(f"'{parent_id}' in parents and name = '{name}'")
+        for file in file_list:
+            id=file["id"]
+            break
+        if id=='':
+            return self.upload(local_path,parent_id)
+        file_metadata = {
+            'name': os.path.basename(local_path),
+            #'parents': [parent_id]
+        }
+        media = MediaFileUpload(
+            local_path, 
+            mimetype=mimetypes.guess_type(local_path)[0], 
+            resumable=True
+        )
+        drive_file = self.service.files().update(
+            body=file_metadata, media_body=media, fileId=id,fields='id',
+            supportsAllDrives=True,
         ).execute()
         return drive_file.get("id")
 
