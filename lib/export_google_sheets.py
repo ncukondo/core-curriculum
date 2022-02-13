@@ -1,6 +1,5 @@
 import os
 import json
-import datetime
 import tempfile
 
 from dateutil.parser import parse as parse_date
