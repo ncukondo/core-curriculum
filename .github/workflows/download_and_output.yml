@@ -49,6 +49,9 @@ jobs:
           make docs
           make draft_docs
         if: steps.changes.outputs.count > 0
+      - name: deploy
+        run: make deploy
+        if: steps.changes.outputs.count > 0
       - name: commit & push
         run: |
           git config user.name github-actions
