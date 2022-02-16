@@ -1,11 +1,11 @@
 import base64
 import datetime
 import time
-import bz2
 
 _LAST_TIME=0
 _EIDIAN = "big"
 _SIZE=100
+
 
 def time_based_uid(seed:datetime.datetime=None)->str:
     '''
@@ -19,8 +19,8 @@ def time_based_uid(seed:datetime.datetime=None)->str:
         return time_based_uid()
     _LAST_TIME=time_seed
     b=time_seed.to_bytes(5,_EIDIAN,signed=False)
-    id=base64.urlsafe_b64encode(b).decode().replace("=","")
-    return id
+    uid=base64.urlsafe_b64encode(b).decode().replace("=","")
+    return uid
 
 def decode_time_based_uid(uid:str)->datetime.datetime:
     '''
@@ -28,13 +28,22 @@ def decode_time_based_uid(uid:str)->datetime.datetime:
     '''
     decoded_bytes=base64.urlsafe_b64decode((uid+"=").encode())
     epoc_time = int.from_bytes(decoded_bytes, byteorder=_EIDIAN, signed=False)/_SIZE
-    dt =  datetime.datetime.fromtimestamp(epoc_time)
-    return dt
+    decoded =  datetime.datetime.fromtimestamp(epoc_time)
+    return decoded
 
-if __name__ == "__main__":
-    for i in range(0,1000):
+def main():
+    """ for test """
+    ids = []
+    for _ in range(0,1000):
         uid=time_based_uid()
+        ids.append(uid)
         decoded=decode_time_based_uid(uid)
-        print(f"{uid}:  from {decoded}")
+        print(f"{uid}\tfrom {decoded}")
+    print(ids)
+    with open("./uid_list.txt","w",encoding="utf_8") as f:
+        f.write("\n".join(ids))
     model_time=datetime.datetime(2025,2,6,8,8,11)
     print(time_based_uid(model_time))
+
+if __name__ == "__main__":
+    main()

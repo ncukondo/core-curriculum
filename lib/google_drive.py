@@ -1,27 +1,25 @@
+""" really thin wrapper for google drive python api client
+
+requirements
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+
+"""
+import os
 import os.path
 import mimetypes
-import os
 import io
 import enum
-from dateutil.parser import parse
 
-from lib.google_auth import get_creds
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from googleapiclient.http import MediaIoBaseDownload
 from httplib2 import Http
 
-''' 
-requirements
-google-api-python-client 
-google-auth-httplib2 
-google-auth-oauthlib 
-'''
+from lib.google_auth import get_creds
 
-'''
-save client secrets(as InstalledApp) in 'client_secrets.json'
-'''
 
 class FileExtType(enum.Enum):
     """ class for enum file extention to export"""
@@ -105,6 +103,21 @@ def from_service_account():
     """ make GoogleDrive instance from service account information """
     return GoogleDrive(get_creds())
 
+def make_metadata(local_path:str,parent_id:str=None):
+    """ make metadata for google drive """
+    file_metadata={'name': os.path.basename(local_path)}
+    if parent_id:
+        file_metadata["parents"]=[parent_id]
+    return file_metadata
+
+def make_mediabody(local_path:str):
+    """ make media body for google drive """
+    return MediaFileUpload(
+            local_path,
+            mimetype=mimetypes.guess_type(local_path)[0],
+            resumable=True
+        )
+
 class GoogleDrive:
     ''' class of thin wrapper for googleapiclient '''
 
@@ -112,47 +125,42 @@ class GoogleDrive:
         self.cred=cred
         self.service = build(API_SERVICE_NAME, API_VERSION, http=cred.authorize(Http()))
 
-    def upload(self,file:str,parent_id:str)->str:
+    def upload(self,local_path:str,parent_id:str)->str:
         """ upload local file to drive """
-        file_metadata = {
-            'name': os.path.basename(file),
-            'parents': [parent_id]
-        }
-        media = MediaFileUpload(
-            file,
-            mimetype=mimetypes.guess_type(file)[0],
-            resumable=True
-        )
+        file_metadata = make_metadata(local_path,parent_id)
+        media = make_mediabody(local_path)
         drive_file = self.service.files().create(
             body=file_metadata, media_body=media, fields='id',
             supportsAllDrives=True,
         ).execute()
         return drive_file.get("id")
 
-    def update_by_name(self,local_path:str,parent_id:str):
-        """ update file of same name or upload file """
-        name = os.path.basename(local_path)
-        id=''
-        file_list = self.get_list(f"'{parent_id}' in parents and name = '{name}'")
-        for file in file_list:
-            id=file["id"]
-            break
-        if id=='':
-            return self.upload(local_path,parent_id)
-        file_metadata = {
-            'name': os.path.basename(local_path),
-            #'parents': [parent_id]
-        }
-        media = MediaFileUpload(
-            local_path, 
-            mimetype=mimetypes.guess_type(local_path)[0], 
-            resumable=True
-        )
+    def update(self,local_path:str,target_id:str):
+        """ update file of the id or upload file """
+        file_metadata = make_metadata(local_path)
+        media = make_mediabody(local_path)
         drive_file = self.service.files().update(
-            body=file_metadata, media_body=media, fileId=id,fields='id',
+            body=file_metadata, media_body=media, fileId=target_id,fields='id',
             supportsAllDrives=True,
         ).execute()
         return drive_file.get("id")
+
+    def get_id_by_name(self,name:str,parent_id:str):
+        """ get id of the named file in parent_id """
+        file_id=''
+        file_list = self.get_list(f"'{parent_id}' in parents and name = '{name}'")
+        for file in file_list:
+            file_id=file["id"]
+            break
+        return file_id
+
+    def update_by_name(self,local_path:str,parent_id:str):
+        """ update file of same name or upload file """
+        name = os.path.basename(local_path)
+        file_id=self.get_id_by_name(name,parent_id)
+        if file_id=='':
+            return self.upload(local_path,parent_id)
+        return self.update(local_path,file_id)
 
     def download(self,file_id:str,dest_path:str=".")->str:
         """ download content from drive """
@@ -161,8 +169,8 @@ class GoogleDrive:
             supportsAllDrives=True).execute()
         path = os.path.join(dest_path,file["name"])
         request = self.service.files().get_media(fileId=file_id)
-        fh = io.FileIO(path, mode='wb')
-        downloader = MediaIoBaseDownload(fh, request)
+        file_handle = io.FileIO(path, mode='wb')
+        downloader = MediaIoBaseDownload(file_handle, request)
         done = False
         while not done:
             _, done = downloader.next_chunk()
@@ -225,13 +233,17 @@ class GoogleDrive:
 
 
 def main():
+    """ for test  """
     print(mimetypes.guess_type("sample.xlsx")[0])
     file_list=from_service_account().list_in_folder(
         "1NrjWTGweLNoUU1n-EH9yhIU5ZBUHOLs1",
         ["id","name","modifiedTime","parents"])
     for file in file_list:
         print(file)
-    info = from_service_account().file_info("1UmKJiKjrNjweJFSRg_cpqOw3SbWrdH5VHhja9AR_rtc",["name","modifiedTime","parents"])
+    info = from_service_account().file_info(
+        "1UmKJiKjrNjweJFSRg_cpqOw3SbWrdH5VHhja9AR_rtc",
+        ["name","modifiedTime","parents"]
+        )
     print(info)
     #from_service_account().export(
     #    "1Dg2QAub4L0Hjxoby-tl3REQSMk8AvKt4h2_UVbufVvc",FileExtType.XLSX)

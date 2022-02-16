@@ -35,9 +35,10 @@ draft_pdf: r4_draft_temp.html
 		./dist/r4_draft_temp.html \
 		-o ./dist/r4_draft.pdf
 
-r4_draft_temp.html: markdown
+r4_draft_temp.html: 
 	${d_run}pandoc-latex-ja \
 		-s --self-contained \
+		--from markdown+strikeout \
 		-t html5 \
 		./dist/r4_draft.md \
 		-o ./dist/r4_draft_temp.html
