@@ -25,8 +25,12 @@ print("output... ./dist/r4.md")
 r4_md_text
 
 
-# In[2]:
+# In[27]:
 
+
+import pandas as pd
+
+from lib.dataframe_to_text import dataframe_to_text
 
 
 r4_draft=pd.read_csv("./dist/r4_draft.csv")
@@ -36,9 +40,13 @@ r4_to_md_draft["第1層"]="\n"+"# "+r4_draft["第1層"]+"\n\n"+r4_draft["第1層
 r4_to_md_draft["第2層"]="\n"+"## "+r4_draft["第2層"]+"\n\n"+r4_draft["第2層説明"]+"\n"
 r4_to_md_draft["第3層"]="\n"+"### "+r4_draft["第3層"]+"\n"
 r4_to_md_draft["第4層"]="1. "+r4_draft["第4層"]
+r4_to_md_draft=r4_to_md_draft[~(r4_draft["第4層"].fillna("").str.startswith("削除"))]
 
-
-r4_md_draft=dataframe_to_text(r4_to_md_draft)
+r4_md_draft="""---
+title: "医学教育モデル・コア・カリキュラム"
+---
+"""
+r4_md_draft += dataframe_to_text(r4_to_md_draft)
 r4_md_draft += f"\n\n# 別表\n\n"
 
 ex_tables = {
