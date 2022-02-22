@@ -49,7 +49,7 @@ def decode_time_based_uid(uid:str)->datetime.datetime:
 def main():
     """ for test """
     ids = []
-    for _ in range(0,100):
+    for _ in range(0,37):
         uid=time_based_uid()
         ids.append(uid)
         decoded=decode_time_based_uid(uid)
