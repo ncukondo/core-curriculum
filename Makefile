@@ -49,6 +49,10 @@ markdown: csv output_markdown.py
 csv: output_csv.py
 	python output_csv.py
 
+statistics: output_statistics.py
+	python output_statistics.py
+
+
 raw_csv: download_sheets.py
 	python download_sheets.py
 
@@ -63,4 +67,7 @@ deploy_to_google_drive.py: deploy_to_google_drive.ipynb
 
 output_markdown.py: output_markdown.ipynb
 	jupyter nbconvert --to python output_markdown.ipynb
+
+output_statistics.py: output_statistics.ipynb
+	jupyter nbconvert --to python output_statistics.ipynb
 

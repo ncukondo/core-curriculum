@@ -42,6 +42,9 @@ jobs:
       - name: make markdown and CSVs
         run: make markdown
         if: steps.changes.outputs.count > 0
+      - name: make statistics
+        run: make statistics
+        if: steps.changes.outputs.count > 0
       - name: ouput docs(docx,pdf,draft docx, draft pdf)
         run: |
           make docs
