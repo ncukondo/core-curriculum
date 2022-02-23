@@ -4,3 +4,4 @@ client_secret.json
 client_secret.env
 temp
 __pycache__
+uid_list.txt

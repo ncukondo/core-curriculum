@@ -49,13 +49,13 @@ def decode_time_based_uid(uid:str)->datetime.datetime:
 def main():
     """ for test """
     ids = []
-    for _ in range(0,37):
+    for _ in range(0,100):
         uid=time_based_uid()
         ids.append(uid)
         decoded=decode_time_based_uid(uid)
         print(f"{uid}\tfrom {decoded}")
     print(ids)
-    with open("./uid_list.txt","w",encoding="utf_8") as f:
+    with open("./dist/uid_list.txt","w",encoding="utf_8") as f:
         f.write("\n".join(ids))
     model_time=datetime.datetime(2025,2,6,8,8,11)
     print(time_based_uid(model_time))
