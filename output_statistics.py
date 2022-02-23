@@ -102,23 +102,22 @@ h28_to_r4.to_csv("./dist/h28_to_r4.csv",encoding="utf_8_sig",index=False)
 h28_to_r4
 
 
-# In[112]:
+# In[28]:
 
 
-r4_new = pd.DataFrame([])
-for tab in r4_l1.index:
-    df = pd.read_csv(f'./raw/gsheets/R4コアカリ提出用/{tab}.csv')
-    df["第1層"]=r4_l1.at[tab,"第1層"]
-    r4_new = pd.concat([r4_new,df.loc[:,["第1層","第2層","第3層","第4層","H28対応項目"]]],axis=0)
-
-
-table_df = pd.read_csv('./dist/r4_table_all.csv')
-table_h28_to_r4 = table_df.rename(columns={"項目":"行き先"})
-h28_to_r4 = pd.concat([h28_to_r4,table_h28_to_r4.loc[:,["行き先","H28対応項目"]]],axis=0)
+r4_new = pd.read_csv("./dist/r4_full.csv").loc[:,["第1層","第2層","第3層","第4層","H28対応項目"]]
 
 r4_new= r4_new.rename(columns={"H28対応項目":"H28ID"})
 r4_new=r4_new.fillna("")
 r4_new=r4_new[r4_new["H28ID"]==""]
 r4_new.to_csv("./dist/r4_new.csv",index=False,encoding="utf_8_sig")
 r4_new
+
+r4_draft_new = pd.read_csv("./dist/r4_draft.csv").loc[:,["第1層","第2層","第3層","第4層","H28対応項目"]]
+
+r4_draft_new= r4_draft_new.rename(columns={"H28対応項目":"H28ID"})
+r4_draft_new=r4_draft_new.fillna("")
+r4_draft_new=r4_draft_new[r4_draft_new["H28ID"]==""]
+r4_draft_new.to_csv("./dist/r4_draft_new.csv",index=False,encoding="utf_8_sig")
+r4_draft_new
 
