@@ -4,14 +4,15 @@ gid:=$(shell id -g)
 repo=ghcr.io/ncukondo/
 d_run:=docker run --rm --volume "${pwd}:/data" --user ${uid}:${gid} ${repo}
 
-deploy: deploy_to_google_drive.py
+deploy:
+	jupyter nbconvert --to python deploy_to_google_drive.ipynb
 	python deploy_to_google_drive.py
 
 docs: pdf docx
 
 draft_docs: draft_pdf draft_docx
 
-draft_docx: r4_draft_temp.html
+draft_docx: r4_draft_temp_html
 	${d_run}pandoc-latex-ja ./dist/r4_draft_temp.html -o ./dist/r4_draft.docx
 
 docx: markdown
@@ -26,7 +27,7 @@ pdf: markdown
 		./dist/r4.md \
 		-o ./dist/r4.pdf
 
-draft_pdf: r4_draft_temp.html
+draft_pdf: r4_draft_temp_html
 	${d_run}pandoc-latex-ja \
 		-V classoption="pandoc" \
 		-V documentclass=bxjsarticle \
@@ -35,7 +36,7 @@ draft_pdf: r4_draft_temp.html
 		./dist/r4_draft_temp.html \
 		-o ./dist/r4_draft.pdf
 
-r4_draft_temp.html: markdown
+r4_draft_temp_html: markdown
 	${d_run}pandoc-latex-ja \
 		-s --self-contained \
 		--from markdown+strikeout \
@@ -43,17 +44,21 @@ r4_draft_temp.html: markdown
 		./dist/r4_draft.md \
 		-o ./dist/r4_draft_temp.html
 
-markdown: csv output_markdown.py
+markdown: csv
+	jupyter nbconvert --to python output_markdown.ipynb
 	python output_markdown.py
 
-csv: output_csv.py
+csv: 
+	jupyter nbconvert --to python output_csv.ipynb
 	python output_csv.py
 
-statistics: output_statistics.py
+statistics:
+	jupyter nbconvert --to python output_statistics.ipynb
 	python output_statistics.py
 
 
-raw_csv: download_sheets.py
+raw_csv:
+	jupyter nbconvert --to python download_sheets.ipynb
 	python download_sheets.py
 
 output_csv.py: output_csv.ipynb
