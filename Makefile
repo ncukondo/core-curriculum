@@ -61,18 +61,3 @@ raw_csv:
 	jupyter nbconvert --to python download_sheets.ipynb
 	python download_sheets.py
 
-output_csv.py: output_csv.ipynb
-	jupyter nbconvert --to python output_csv.ipynb
-
-download_sheets.py: download_sheets.ipynb
-	jupyter nbconvert --to python download_sheets.ipynb
-
-deploy_to_google_drive.py: deploy_to_google_drive.ipynb
-	jupyter nbconvert --to python deploy_to_google_drive.ipynb
-
-output_markdown.py: output_markdown.ipynb
-	jupyter nbconvert --to python output_markdown.ipynb
-
-output_statistics.py: output_statistics.ipynb
-	jupyter nbconvert --to python output_statistics.ipynb
-
