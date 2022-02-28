@@ -20,29 +20,19 @@ docx: markdown
 
 pdf: markdown
 	${d_run}pandoc-latex-ja \
-		-V classoption="pandoc" \
-		-V documentclass=bxjsarticle \
-		--pdf-engine=xelatex \
+		-V documentclass=ltjsarticle \
+		--pdf-engine=lualatex \
 		--filter=pandoc-crossref \
 		./dist/r4.md \
 		-o ./dist/r4.pdf
 
-draft_pdf: r4_draft_temp_html
+draft_pdf: markdown
 	${d_run}pandoc-latex-ja \
-		-V classoption="pandoc" \
-		-V documentclass=bxjsarticle \
-		--pdf-engine=xelatex \
+		-V documentclass=ltjsarticle \
+		--pdf-engine=lualatex \
 		--filter=pandoc-crossref \
-		./dist/r4_draft_temp.html \
-		-o ./dist/r4_draft.pdf
-
-r4_draft_temp_html: markdown
-	${d_run}pandoc-latex-ja \
-		-s --self-contained \
-		--from markdown+strikeout \
-		-t html5 \
 		./dist/r4_draft.md \
-		-o ./dist/r4_draft_temp.html
+		-o ./dist/r4_draft.pdf
 
 markdown: csv
 	jupyter nbconvert --to python output_markdown.ipynb
