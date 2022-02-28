@@ -12,12 +12,13 @@ docs: pdf docx
 
 draft_docs: draft_pdf draft_docx
 
-draft_docx: r4_draft_temp_html
-	${d_run}pandoc-latex-ja ./dist/r4_draft_temp.html -o ./dist/r4_draft.docx
+draft_docx:
+	${d_run}pandoc-latex-ja ./dist/r4_draft.md -o ./dist/r4_draft.docx
 
 docx: markdown
 	${d_run}pandoc-latex-ja ./dist/r4.md -o ./dist/r4.docx
 
+# docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) ghcr.io/ncukondo/pandoc-latex-ja -V documentclass=ltjsarticle --pdf-engine=lualatex --filter=pandoc-crossref ./dist/r4.md -o ./dist/r4.pdf
 pdf: markdown
 	${d_run}pandoc-latex-ja \
 		-V documentclass=ltjsarticle \
@@ -26,6 +27,7 @@ pdf: markdown
 		./dist/r4.md \
 		-o ./dist/r4.pdf
 
+# docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) ghcr.io/ncukondo/pandoc-latex-ja -V documentclass=ltjsarticle --pdf-engine=lualatex --filter=pandoc-crossref ./dist/r4_draft.md -o ./dist/r4_draft.pdf
 draft_pdf: markdown
 	${d_run}pandoc-latex-ja \
 		-V documentclass=ltjsarticle \
