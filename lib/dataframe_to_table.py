@@ -1,0 +1,80 @@
+import pandas as pd
+from textwrap import dedent
+
+
+def stack_samerows(table:pd.DataFrame,splitter:str=":::"):
+    """ stack samerows in dataframe"""
+    columns=list(table.columns.values)
+    output_table=table.copy().fillna("")
+    template_table=output_table.copy()
+    for i in range(0,len(columns)-1):
+        to_indexed = columns[0:i+1]
+        indexed =template_table.groupby(to_indexed,as_index=False,sort=False)\
+            .count()\
+            .apply(lambda x:[x[i]+splitter+str(x[i+1]),*[None]*(x[i+1]-1)],axis=1)
+        indexed = sum(indexed,[])
+        output_table.iloc[:,i]=indexed
+    return output_table
+
+def make_html_table(table:pd.DataFrame,stack:bool=False):
+    """ make html table from dataframe """
+    SPLITTER="::-:-::"
+    def to_table_cell(x):
+        if x==None:
+            return ""
+        elif SPLITTER in x:
+            s=x.split(SPLITTER)
+            return f'<td rowspan="{s[1]}">{s[0]}</td>'
+        else:
+            return f"<td>{x}</td>"
+
+    output_table= stack_samerows(table,SPLITTER) if stack else table.copy().fillna("")
+    columns=list(table.columns.values)
+
+    output_table=output_table.applymap(to_table_cell)
+
+    theader=f"<thead><tr><th>{'</th><th>'.join(columns)}</th></thead></tr>"
+    tbody="<tbody>\n"
+    for items in output_table.fillna("").itertuples():
+        row=f"<tr>{''.join(items[1:])}</tr>\n"
+        tbody += row
+    tbody+="</tbody>\n"
+    table_html=f"<table border=1>{theader}\n{tbody}</table>"
+    return table_html
+
+def make_latex_table(table:pd.DataFrame,label:str="",caption:str="",stack:bool=False):
+    """ make latex table from dataframe """
+    SPLITTER="::-:-::"
+    def to_table_cell(x):
+        if x==None:
+            return ""
+        elif SPLITTER in x:
+            s=x.split(SPLITTER)
+            return r'\multirow{%s}{*}{%s}' % (s[1],s[0])
+        else:
+            return x
+
+    columns=list(table.columns.values)
+    output_table= stack_samerows(table,SPLITTER) if stack else table.copy().fillna("")
+
+    output_table=output_table.applymap(to_table_cell)
+
+    theader=r"""
+        \begin{table}[h]
+        \caption{\label{tbl:%s}%s}
+        \begin{xltabular}{\linewidth}{llXr}
+        \toprule
+    """ % (label,caption)
+    theader=dedent(theader)
+    theader+=' & '.join(columns)+r" \\"
+    tbody="\\midrule\n\\endhead\n"
+    for items in output_table.itertuples():
+        row=' & '.join(items[1:])+r" \\"+"\n"
+        tbody += row
+    tbody+=r"\bottomrule"
+    table_latex=f"{theader}\n{tbody}"+dedent(r"""
+        \end{xltabular}
+        \end{table}
+    """)
+    return table_latex
+
