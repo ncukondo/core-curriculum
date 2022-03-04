@@ -23,6 +23,8 @@ for tab in tabs:
 
 r4_l12=pd.merge(r4_l1,r4_l2,how="outer").rename(columns={"メモ":"第2層メモ"})
 r4_full=pd.merge(r4_l12,r4_l234,how="outer")
+r4_full=r4_full.dropna(subset=["第1層","第2層","第3層","第4層"])
+
 r4_no_disc=r4_full.loc[:,["第1層","第2層","第3層","第4層"]]
 
 r4_full.to_csv("./dist/r4_full.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
@@ -33,7 +35,7 @@ print("output... r4_no_dics.csv")
 r4_full
 
 
-# In[5]:
+# In[6]:
 
 
 import csv
@@ -51,14 +53,14 @@ for tab in tabs:
 
 r4_l12_draft=pd.merge(r4_l1_draft,r4_l2_draft,how="outer").rename(columns={"メモ":"第2層メモ"})
 r4_full_draft=pd.merge(r4_l12_draft,r4_l234_draft,how="outer")
-r4_full_draft=r4_full_draft.fillna("")
+r4_full_draft=r4_full_draft.dropna(subset=["第1層","第2層","第3層","第4層"])
 r4_full_draft.to_csv("./dist/r4_draft.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
 print("output... r4_draft.csv")
 
 r4_full_draft
 
 
-# In[4]:
+# In[5]:
 
 
 import csv

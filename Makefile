@@ -13,10 +13,10 @@ docs: pdf docx
 draft_docs: draft_pdf draft_docx
 
 draft_docx:
-	${d_run}pandoc-latex-ja ./dist/r4_draft.md -o ./dist/r4_draft.docx
+	${d_run}pandoc-latex-ja -N --toc --filter=pandoc-crossref ./dist/r4_draft.md -o ./dist/r4_draft.docx
 
 docx: markdown
-	${d_run}pandoc-latex-ja ./dist/r4.md -o ./dist/r4.docx
+	${d_run}pandoc-latex-ja -N --toc --filter=pandoc-crossref ./dist/r4.md -o ./dist/r4.docx
 
 # docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) ghcr.io/ncukondo/pandoc-latex-ja -V documentclass=ltjsarticle --pdf-engine=lualatex --filter=pandoc-crossref ./dist/r4.md -o ./dist/r4.pdf
 pdf: markdown
@@ -24,6 +24,8 @@ pdf: markdown
 		-V documentclass=ltjsarticle \
 		--pdf-engine=lualatex \
 		--filter=pandoc-crossref \
+		-N \
+		--toc \
 		./dist/r4.md \
 		-o ./dist/r4.pdf
 
@@ -33,12 +35,18 @@ draft_pdf: markdown
 		-V documentclass=ltjsarticle \
 		--pdf-engine=lualatex \
 		--filter=pandoc-crossref \
+		-N \
+		--toc \
 		./dist/r4_draft.md \
 		-o ./dist/r4_draft.pdf
 
-markdown: csv
+markdown: csv tables
 	jupyter nbconvert --to python output_markdown.ipynb
 	python output_markdown.py
+
+tables: csv 
+	jupyter nbconvert --to python output_tables.ipynb
+	python output_tables.py
 
 csv: 
 	jupyter nbconvert --to python output_csv.ipynb
