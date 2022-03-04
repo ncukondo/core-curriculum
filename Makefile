@@ -40,9 +40,13 @@ draft_pdf: markdown
 		./dist/r4_draft.md \
 		-o ./dist/r4_draft.pdf
 
-markdown: csv
+markdown: csv tables
 	jupyter nbconvert --to python output_markdown.ipynb
 	python output_markdown.py
+
+tables: csv 
+	jupyter nbconvert --to python output_tables.ipynb
+	python output_tables.py
 
 csv: 
 	jupyter nbconvert --to python output_csv.ipynb

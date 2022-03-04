@@ -2,8 +2,8 @@ from textwrap import dedent
 import pandas as pd
 
 
-def stack_samerows(table:pd.DataFrame,splitter:str=":::"):
-    """ stack samerows in dataframe"""
+def group_rows(table:pd.DataFrame,splitter:str=":::"):
+    """ group samerows in dataframe"""
     columns=list(table.columns.values)
     output_table=table.copy().fillna("")
     template_table=output_table.copy()
@@ -16,7 +16,7 @@ def stack_samerows(table:pd.DataFrame,splitter:str=":::"):
         output_table.iloc[:,i]=indexed
     return output_table
 
-def make_html_table(table:pd.DataFrame,stack:bool=False):
+def make_html_table(table:pd.DataFrame,group:bool=False):
     """ make html table from dataframe """
     SPLITTER="::-:-::"
     def to_table_cell(x):
@@ -28,7 +28,7 @@ def make_html_table(table:pd.DataFrame,stack:bool=False):
         else:
             return f"<td>{x}</td>"
 
-    output_table= stack_samerows(table,SPLITTER) if stack else table.copy().fillna("")
+    output_table= group_rows(table,SPLITTER) if group else table.copy().fillna("")
     columns=list(table.columns.values)
 
     output_table=output_table.applymap(to_table_cell)
@@ -50,7 +50,7 @@ def make_latex_table(table:pd.DataFrame,
     label:str="",
     layout:str="",
     caption:str="",
-    stack:bool=False):
+    group:bool=False):
     """ make latex table from dataframe """
     SPLITTER="::-:-::"
     def to_table_cell(x):
@@ -64,7 +64,7 @@ def make_latex_table(table:pd.DataFrame,
 
     columns=list(table.columns.values)
     layout = layout if layout!="" else repeat("X",len(columns))
-    output_table= stack_samerows(table,SPLITTER) if stack else table.copy().fillna("")
+    output_table= group_rows(table,SPLITTER) if group else table.copy().fillna("")
 
     output_table=output_table.applymap(to_table_cell)
 
