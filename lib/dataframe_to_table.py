@@ -1,5 +1,5 @@
-import pandas as pd
 from textwrap import dedent
+import pandas as pd
 
 
 def stack_samerows(table:pd.DataFrame,splitter:str=":::"):
@@ -42,7 +42,15 @@ def make_html_table(table:pd.DataFrame,stack:bool=False):
     table_html=f"<table border=1>{theader}\n{tbody}</table>"
     return table_html
 
-def make_latex_table(table:pd.DataFrame,label:str="",caption:str="",stack:bool=False):
+def repeat(char:str,count:int):
+    """ repeat same char for count time """
+    return "".join([char for x in range(count)])
+
+def make_latex_table(table:pd.DataFrame,
+    label:str="",
+    layout:str="",
+    caption:str="",
+    stack:bool=False):
     """ make latex table from dataframe """
     SPLITTER="::-:-::"
     def to_table_cell(x):
@@ -50,21 +58,21 @@ def make_latex_table(table:pd.DataFrame,label:str="",caption:str="",stack:bool=F
             return ""
         elif SPLITTER in x:
             s=x.split(SPLITTER)
-            return r'\multirow{%s}{*}{%s}' % (s[1],s[0])
+            return s[0]
         else:
             return x
 
     columns=list(table.columns.values)
+    layout = layout if layout!="" else repeat("X",len(columns))
     output_table= stack_samerows(table,SPLITTER) if stack else table.copy().fillna("")
 
     output_table=output_table.applymap(to_table_cell)
 
     theader=r"""
-        \begin{table}[h]
-        \caption{\label{tbl:%s}%s}
-        \begin{xltabular}{\linewidth}{llXr}
+        \begin{xltabular}{\linewidth}{%s}
+        \caption{\label{tbl:%s}%s} \\
         \toprule
-    """ % (label,caption)
+    """ % (layout,label,caption)
     theader=dedent(theader)
     theader+=' & '.join(columns)+r" \\"
     tbody="\\midrule\n\\endhead\n"
@@ -74,7 +82,6 @@ def make_latex_table(table:pd.DataFrame,label:str="",caption:str="",stack:bool=F
     tbody+=r"\bottomrule"
     table_latex=f"{theader}\n{tbody}"+dedent(r"""
         \end{xltabular}
-        \end{table}
     """)
     return table_latex
 
