@@ -58,6 +58,6 @@ statistics:
 
 
 raw_csv:
-	jupyter nbconvert --to python download_sheets.ipynb
-	python download_sheets.py
-
+	$(eval target=download_sheets)
+	jupyter nbconvert --to python $(target).ipynb --output $(target).py
+	python  $(target).py
