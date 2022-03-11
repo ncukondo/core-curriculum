@@ -35,24 +35,25 @@ print("output... r4_no_dics.csv")
 r4_full
 
 
-# In[6]:
+# In[1]:
 
 
 import csv
 import pandas as pd
 
 r4_l1_draft=pd.read_csv("./raw/sheets/R4コアカリ提出用/第1層.csv")
-r4_l2_draft=pd.read_csv("./raw/sheets/R4コアカリ提出用/第2層.csv")
 
-columns=["第2層","第3層","第4層","メモ","UID","H28対応項目"]
+columns=["第1層","第2層","第2層説明","第3層","第4層","メモ","UID","H28対応項目"]
 r4_l234_draft = pd.DataFrame(data=[],columns=columns)
 tabs=r4_l1_draft["タブ名"]
-for tab in tabs:
-    r4_l34_unit=pd.read_csv(f"./raw/sheets/{tab}編集用/第2から4層.csv")
+for index, row in r4_l1_draft.iterrows():
+    r4_l34_unit=pd.read_csv(f"./raw/sheets/{row.タブ名}編集用/第2から4層.csv")
+    r4_l2_unit=pd.read_csv(f"./raw/sheets/{row.タブ名}編集用/第2層.csv")
+    r4_l34_unit["第1層"] = row.第1層
+    r4_l34_unit = pd.merge(r4_l34_unit,r4_l2_unit,how="left",on="第2層")
     r4_l234_draft=pd.concat([r4_l234_draft,r4_l34_unit.loc[:,columns]])
 
-r4_l12_draft=pd.merge(r4_l1_draft,r4_l2_draft,how="outer").rename(columns={"メモ":"第2層メモ"})
-r4_full_draft=pd.merge(r4_l12_draft,r4_l234_draft,how="outer")
+r4_full_draft=pd.merge(r4_l1_draft,r4_l234_draft,how="outer",on="第1層")
 r4_full_draft=r4_full_draft.dropna(subset=["第1層","第2層","第3層","第4層"])
 r4_full_draft.to_csv("./dist/r4_draft.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
 print("output... r4_draft.csv")
