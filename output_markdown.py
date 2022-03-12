@@ -25,10 +25,11 @@ print("output... ./dist/r4.md")
 r4_md_text
 
 
-# In[5]:
+# In[3]:
 
 
 import pandas as pd
+import re
 
 from lib.dataframe_to_text import dataframe_to_text
 
@@ -44,6 +45,12 @@ r4_to_md_draft=r4_to_md_draft.dropna(subset=["第1層","第2層","第3層","第4
 r4_to_md_draft=r4_to_md_draft[~(r4_to_md_draft["第4層"].str.startswith("削除"))]
 
 r4_to_md_draft
+r4_md_draft = dataframe_to_text(r4_to_md_draft)
+
+with open("./dist/r4_draft.md","w") as f:
+    f.write(r4_md_draft)
+
+r4_md_draft=re.sub(r"(\n# )",r"\n\\newpage\n\1",r4_md_draft)
 
 r4_md_draft=r"""---
 title: "医学教育モデル・コア・カリキュラム"
@@ -61,9 +68,9 @@ eqnPrefix: "式."
 tblPrefix: "表."
 lstPrefix: "コード."
 ---
-"""
-r4_md_draft += dataframe_to_text(r4_to_md_draft)
-r4_md_draft += f"\n\n# 別表\n\n"
+"""+r4_md_draft
+
+r4_md_draft += f"\n\\newpage\n# 別表\n\n"
 
 tables = ""
 
@@ -73,7 +80,7 @@ with open("./dist/r4_draft_tables.tex","r") as f:
 r4_md_draft += latex_tables
 
 
-with open("./dist/r4_draft.md","w") as f:
+with open("./dist/r4_draft_tex.md","w") as f:
     f.write(r4_md_draft)
 
 print("output... ./dist/r4_draft.md")

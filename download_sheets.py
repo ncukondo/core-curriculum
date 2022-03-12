@@ -21,7 +21,7 @@ DIST_DIR="./raw/sheets/"
 
 try:
     with tempfile.TemporaryDirectory() as temp_dir:
-        file_list=export_google_sheets(folder_ids,temp_dir)
+        file_list=export_google_sheets(folder_ids,temp_dir,info_stor_file="./raw/sheets/sheets_info.json")
         for file in file_list:
             book = pd.ExcelFile(file["export_path"])
             dir_name = os.path.join(DIST_DIR,file['name'])
