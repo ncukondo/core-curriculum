@@ -17,8 +17,11 @@ def export_google_sheets(folder_ids:list[str],dist_dir:str=None,info_stor_file:s
 
     drive = from_service_account()
     gsheets_info={}
-    with open(info_stor_file,"r",encoding="utf_8") as f:
-        gsheets_info=json.load(f)
+    try:
+        with open(info_stor_file,"r",encoding="utf_8") as f:
+            gsheets_info=json.load(f)
+    except:
+        print(f"file not found({info_stor_file})")
 
     global_updated=gsheets_info.get("global",{}).get("updated",epoc_time)
     query="\n and \n".join([ 

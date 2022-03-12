@@ -29,7 +29,7 @@ pdf: markdown
 		./dist/r4.md \
 		-o ./dist/r4.pdf
 
-# docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) ghcr.io/ncukondo/pandoc-latex-ja -V documentclass=ltjsarticle --pdf-engine=lualatex --filter=pandoc-crossref ./dist/r4_draft.md -o ./dist/r4_draft.pdf
+# docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) ghcr.io/ncukondo/pandoc-latex-ja -V documentclass=ltjsarticle --pdf-engine=lualatex --filter=pandoc-crossref ./dist/r4_draft_tex.md -o ./dist/r4_draft.pdf
 draft_pdf: markdown
 	${d_run}pandoc-latex-ja \
 		-V documentclass=ltjsarticle \
@@ -37,7 +37,7 @@ draft_pdf: markdown
 		--filter=pandoc-crossref \
 		-N \
 		--toc \
-		./dist/r4_draft.md \
+		./dist/r4_draft_tex.md \
 		-o ./dist/r4_draft.pdf
 
 markdown: csv tables
