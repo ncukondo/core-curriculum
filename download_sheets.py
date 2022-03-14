@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import os
@@ -13,9 +13,10 @@ from lib.export_google_sheets import export_google_sheets
 
 
 folder_ids=[
-        '1HhIkzwUMBTfStSCyhSRf1SkbQq21hLnM',
-        '1NrjWTGweLNoUU1n-EH9yhIU5ZBUHOLs1',
-        '1FlCwwi71s1BI4uhOf2CefX85byj1Alo_'
+        '1IDl3cSc8u5y4Gf13_PBCEZdFFnDv6Ilz', #入力
+        '1HhIkzwUMBTfStSCyhSRf1SkbQq21hLnM', #データフォーマット
+        '1NrjWTGweLNoUU1n-EH9yhIU5ZBUHOLs1', # R4 version0131に対する査読
+        '1FlCwwi71s1BI4uhOf2CefX85byj1Alo_', #各チーム編集用シート
 ]
 DIST_DIR="./raw/sheets/"
 

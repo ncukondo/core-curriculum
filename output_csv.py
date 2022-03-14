@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[16]:
+# In[22]:
 
 
 #!/usr/bin/env python
@@ -35,7 +35,7 @@ print("output... r4_no_dics.csv")
 r4_full
 
 
-# In[21]:
+# In[29]:
 
 
 import csv
@@ -65,13 +65,13 @@ r4_full_draft=pd.merge(r4_l1_draft,r4_l234_draft,how="outer",on="第1層")
 r4_full_draft=r4_full_draft.dropna(subset=["第1層","第2層","第3層","第4層"])
 r4_full_draft.to_csv("./dist/r4_draft.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
 print("output... r4_draft.csv")
-r4_full_draft.loc[:,["第1層","第2層","第3層","第4層"]].to_csv("./dist/output/outcomes.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
+r4_full_draft.loc[:,["第1層","第2層","第3層","第4層","UID","H28対応項目"]].to_csv("./dist/output/outcomes.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
 print("output... outcomes.csv")
 
 r4_full_draft
 
 
-# In[18]:
+# In[24]:
 
 
 import pandas as pd
@@ -89,7 +89,7 @@ for file in file_list:
     print(f"output... ./dist/output/tables/{name}.csv")
 
 
-# In[19]:
+# In[25]:
 
 
 import pandas as pd
@@ -114,7 +114,7 @@ df.to_csv(f"./dist/output/deleted_or_moved.csv",encoding="utf_8_sig",quoting=csv
 print(f"output... ./dist/output/deleted_or_moved.csv")
 
 
-# In[20]:
+# In[26]:
 
 
 import csv
