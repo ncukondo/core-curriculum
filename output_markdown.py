@@ -25,7 +25,7 @@ print("output... ./dist/r4.md")
 r4_md_text
 
 
-# In[3]:
+# In[2]:
 
 
 import pandas as pd
@@ -35,6 +35,8 @@ from lib.dataframe_to_text import dataframe_to_text
 
 
 r4_draft=pd.read_csv("./dist/r4_draft.csv")
+r4_draft=r4_draft.dropna(subset=["第1層","第2層","第3層","第4層"]).fillna("")
+r4_draft=r4_draft[~(r4_draft["第4層"].str.startswith("削除"))]
 
 r4_to_md_draft=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
 r4_to_md_draft["第1層"]="\n"+"# "+r4_draft["第1層"]+"\n\n"+r4_draft["第1層説明"]+"\n"
@@ -42,13 +44,13 @@ r4_to_md_draft["第2層"]="\n"+"## "+r4_draft["第2層"]+"\n\n"+r4_draft["第2�
 r4_to_md_draft["第3層"]="\n"+"### "+r4_draft["第3層"]+"\n"
 r4_to_md_draft["第4層"]="1. "+r4_draft["第4層"]
 r4_to_md_draft=r4_to_md_draft.dropna(subset=["第1層","第2層","第3層","第4層"])
-r4_to_md_draft=r4_to_md_draft[~(r4_to_md_draft["第4層"].str.startswith("削除"))]
 
-r4_to_md_draft
+r4_to_md_draft.to_csv("./dist/r4_draft_to_md.csv",encoding="utf_8_sig",index=False)
 r4_md_draft = dataframe_to_text(r4_to_md_draft)
 
 with open("./dist/r4_draft.md","w") as f:
     f.write(r4_md_draft)
+print("output... ./dist/r4_draft.md")
 
 r4_md_draft=re.sub(r"(\n# )",r"\n\\newpage\n\1",r4_md_draft)
 
@@ -76,6 +78,7 @@ tables = ""
 
 with open("./dist/r4_draft_tables.tex","r") as f:
     latex_tables = f.read()
+print("output... ./dist/r4_draft_tables.tex")
 
 r4_md_draft += latex_tables
 
@@ -83,5 +86,7 @@ r4_md_draft += latex_tables
 with open("./dist/r4_draft_tex.md","w") as f:
     f.write(r4_md_draft)
 
-print("output... ./dist/r4_draft.md")
+print("output... ./dist/r4_draft_tex.md")
+
+r4_to_md_draft
 
