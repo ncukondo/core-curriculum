@@ -72,7 +72,7 @@ lstPrefix: "コード."
 ---
 """+r4_md_draft
 
-r4_md_draft += f"\n\\newpage\n# 別表\n\n"
+r4_md_draft += f"\n\\newpage\n\n# 別表\n\n"
 
 tables = ""
 
