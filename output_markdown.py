@@ -25,7 +25,7 @@ print("output... ./dist/r4.md")
 r4_md_text
 
 
-# In[3]:
+# In[2]:
 
 
 import pandas as pd
@@ -39,7 +39,7 @@ r4_draft=r4_draft.dropna(subset=["第1層","第2層","第3層","第4層"]).filln
 r4_draft=r4_draft[~(r4_draft["第4層"].str.startswith("削除"))]
 
 r4_to_md_draft=pd.DataFrame(data=[],columns=["第1層","第2層","第3層","第4層"])
-r4_to_md_draft["第1層"]="\n"+"# "+r4_draft["第1層"]+"\n\n"+r4_draft["第1層説明"]+"\n"
+r4_to_md_draft["第1層"]="\n"+"# "+r4_draft["第1層イニシャル"]+": "+r4_draft["第1層"]+"\n\n"+r4_draft["第1層説明"]+"\n"
 r4_to_md_draft["第2層"]="\n"+"## "+r4_draft["第2層"]+"\n\n"+r4_draft["第2層説明"]+"\n"
 r4_to_md_draft["第3層"]="\n"+"### "+r4_draft["第3層"]+"\n"
 r4_to_md_draft["第4層"]="1. "+r4_draft["第4層"]

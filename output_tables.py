@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[2]:
 
 
 import pandas as pd
@@ -22,6 +22,7 @@ def make_draft_tables():
         table = pd.read_csv(file)
 
         table = table.loc[:,row.列.split(",")]
+        print(table)
         latex_output+=make_latex_table(table,row.id,group=True)+"\n\n"
         html_output+=make_html_table(table,group=True)+"\n\n"
 
