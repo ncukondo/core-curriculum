@@ -113,3 +113,24 @@ df=pd.merge(df,r4_l1,how="left",on="タブ名")
 df.to_csv(f"./dist/output/deleted_or_moved.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
 print(f"output... ./dist/output/deleted_or_moved.csv")
 
+
+# In[3]:
+
+
+import pandas as pd
+
+df = pd.read_csv("./raw/sheets/知識編集用/別表-知識.csv").loc[:,["臓器","分類","項目名","UID","H28対応項目"]]
+df=df[df["分類"]=="疾患・病態"]
+df["カテゴリ"] = df["項目名"].str.extract(r"(.+)：")
+df["疾患"] = df["項目名"].str.extract(r"(?:.+：)?(.+)")
+df["疾患"] = df["疾患"].str.split("、")
+df = df.explode("疾患")
+df["サブカテゴリ"]=df["疾患"].str.extract(r"(.+)\[")
+df["疾患"] = df["疾患"].str.extract(r"(?:.+\[)?([^\]]+)\]?$")
+df.loc[df["サブカテゴリ"].notna(),"疾患"] = df[df["サブカテゴリ"].notna()]["疾患"].str.split("・")
+df = df.explode("疾患")
+df = df.loc[:,["臓器","分類","カテゴリ","サブカテゴリ","疾患","UID","H28対応項目"]]
+df.to_csv("./dist/diseases.csv",encoding="utf_8_sig",index=False)
+
+df
+
