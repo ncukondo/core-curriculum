@@ -1247,7 +1247,7 @@ lstPrefix: "コード."
 
 
 \begin{xltabular}{\linewidth}{X}
-\caption{\label{tbl:身体診察}} \\
+\caption{\label{tbl:physical}} \\
 \toprule
 診察項目 \\
 \midrule
@@ -1284,7 +1284,7 @@ lstPrefix: "コード."
 
 
 \begin{xltabular}{\linewidth}{X}
-\caption{\label{tbl:主要な臨床検査}} \\
+\caption{\label{tbl:labo}} \\
 \toprule
 検査項目 \\
 \midrule
@@ -1322,7 +1322,7 @@ MRI検査 \\
 
 
 \begin{xltabular}{\linewidth}{XXX}
-\caption{\label{tbl:基本的臨床手技}} \\
+\caption{\label{tbl:skills}} \\
 \toprule
 分類 & 基本的臨床手技 & 目標レベル \\
 \midrule
@@ -1354,7 +1354,7 @@ MRI検査 \\
 
 
 \begin{xltabular}{\linewidth}{X}
-\caption{\label{tbl:主要診療科}} \\
+\caption{\label{tbl:departments}} \\
 \toprule
 診療科 \\
 \midrule
@@ -1385,7 +1385,7 @@ MRI検査 \\
 
 
 \begin{xltabular}{\linewidth}{XX}
-\caption{\label{tbl:主要症候}} \\
+\caption{\label{tbl:symptoms}} \\
 \toprule
 主要症候 & 検討すべき鑑別疾患 \\
 \midrule
