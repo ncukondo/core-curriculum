@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import pandas as pd
@@ -16,7 +16,7 @@ def make_draft_tables():
     latex_output=""
     html_output=""
     for row in table_index.itertuples():
-        file = list[0] if len(list:=glob.glob(f"./raw/sheets/*編集用/{row.データ元}.csv"))>0 else ""
+        file = list[0] if len(list:=glob.glob(f"./raw/sheets/*編集用/別表-{row.データ元}.csv"))>0 else ""
         if file=="":
             continue
         table = pd.read_csv(file)

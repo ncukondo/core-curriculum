@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[11]:
+# In[4]:
 
 
 import glob
@@ -37,7 +37,7 @@ r4_counts.to_csv("./dist/r4_counts.csv",encoding="utf_8_sig",index=False)
 r4_counts
 
 
-# In[12]:
+# In[5]:
 
 
 h28=pd.read_csv("./dist/output/2016/goals.csv")
@@ -91,7 +91,7 @@ h28_to_r4.to_csv("./dist/h28_to_r4.csv",encoding="utf_8_sig",index=False)
 h28_to_r4
 
 
-# In[13]:
+# In[6]:
 
 
 r4_new = pd.read_csv("./dist/output/outcomes.csv").loc[:,["第1層","第2層","第3層","第4層","H28対応項目"]]
