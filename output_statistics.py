@@ -24,10 +24,18 @@ for file in table_files:
 table_df.to_csv("./dist/r4_table_all.csv",encoding="utf_8_sig",index=False)
 
 
-r4_counts=r4_full    .groupby("第1層",sort=False,as_index=False)    .count()    .loc[:,["第1層","第4層"]]    .rename(columns={"第1層":"項目","第4層":"数"})
+r4_counts=r4_full\
+    .groupby("第1層",sort=False,as_index=False)\
+    .count()\
+    .loc[:,["第1層","第4層"]]\
+    .rename(columns={"第1層":"項目","第4層":"数"})
 r4_counts["項目"]=r4_counts["項目"].str.replace(r"(.+)",r"\1-第4層",regex=True)
 
-table_counts=table_df    .groupby(["項目"],sort=False,as_index=False)    .count()    .loc[:,["項目","H28対応項目"]]    .rename(columns={"H28対応項目":"数"})
+table_counts=table_df\
+    .groupby(["項目"],sort=False,as_index=False)\
+    .count()\
+    .loc[:,["項目","H28対応項目"]]\
+    .rename(columns={"H28対応項目":"数"})
 r4_counts = pd.concat([r4_counts,table_counts],axis=0)
 
 new_line=pd.DataFrame({"項目":[f"合計"],"数":[r4_counts["数"].sum()]})

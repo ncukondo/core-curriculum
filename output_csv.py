@@ -89,6 +89,7 @@ for file in file_list:
     print(f"output... ./dist/output/tables/{name}.csv")
 
 
+
 # In[25]:
 
 
@@ -112,6 +113,7 @@ for file in file_list:
 df=pd.merge(df,r4_l1,how="left",on="タブ名")
 df.to_csv(f"./dist/output/deleted_or_moved.csv",encoding="utf_8_sig",quoting=csv.QUOTE_NONNUMERIC,index=False)
 print(f"output... ./dist/output/deleted_or_moved.csv")
+
 
 
 # In[3]:
